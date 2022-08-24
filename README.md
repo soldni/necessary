@@ -1,2 +1,3 @@
-# necessary
-Python Package to enforce optional dependencies
+# Necessary
+
+Python package to enforce optional dependencies.
