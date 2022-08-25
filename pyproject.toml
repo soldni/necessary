@@ -1,6 +1,6 @@
 [project]
 name = "necessary"
-version = "0.1.2"
+version = "0.2.0"
 description = "Python package to enforce optional dependencies"
 authors = [
     {name = "Luca Soldaini", email = "luca@soldaini.net" }
@@ -9,7 +9,8 @@ license = {text = "Apache-2.0"}
 readme = "README.md"
 requires-python = ">=3.8"
 dependencies = [
-    "packaging>=21.0"
+    "packaging>=21.0",
+    "typing_extensions>=4.3.0"
 ]
 
 [project.urls]
@@ -25,6 +26,8 @@ dev = [
     "autopep8>=1.7.0",
     "flake8>=5.0",
     "ipdb>=0.13.0",
+    "flake8-pyi>=22.8.1",
+    "Flake8-pyproject>=1.1.0"
 ]
 
 [build-system]
@@ -64,10 +67,16 @@ multi_line_output = 3
 python_version = 3.8
 ignore_missing_imports = true
 no_site_packages = true
-allow_redefinition = true
+allow_redefinition = false
 
 [tool.mypy-tests]
 strict_optional = false
+
+[tool.flake8]
+per-file-ignores = [
+    '__init__.py:F401',
+    '*.pyi:E302,E305',
+]
 
 # this works in setuptools >= 61.0.0
 [tool.setuptools.package-data]
