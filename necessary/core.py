@@ -7,7 +7,7 @@ from packaging.version import LegacyVersion, Version, parse
 def necessary(
     module_name: str,
     min_version: Optional[Union[str, Version, LegacyVersion]] = None,
-    soft_check: bool = False
+    soft_check: bool = False,
 ) -> bool:
     """Function to check if a module is installed and optionally check its
     version.

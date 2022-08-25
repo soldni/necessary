@@ -1,9 +1,9 @@
 [project]
 name = "necessary"
-version = "0.1.0"
+version = "0.1.1"
 description = "Python package to enforce optional dependencies"
 authors = [
-    {name = "Luca Soldaini", email = "lucas@allenai.org" }
+    {name = "Luca Soldaini", email = "luca@soldaini.net" }
 ]
 license = {text = "Apache-2.0"}
 readme = "README.md"
@@ -13,7 +13,7 @@ dependencies = [
 ]
 
 [project.urls]
-homepage = "https://github.com/soldaini/necessary"
+homepage = "https://github.com/soldni/necessary"
 
 [project.optional-dependencies]
 dev = [
