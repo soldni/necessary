@@ -2,6 +2,12 @@
 
 Python package to enforce optional dependencies.
 
+Install with:
+
+```bash
+pip install necessary
+```
+
 ## How to Use
 
 Simply use `necessary.necessary` to conditionally import a module.
