@@ -27,26 +27,30 @@ class ModuleSpec(NamedTuple):
     module_name: PackageNameType
     module_version: PackageVersionType
 
-def _parse_spec_input(modules_spec: FullSpecType) -> List[ModuleSpec]: ...
 def get_module_version(
     module: ModuleType,
 ) -> Union[Version, LegacyVersion, None]: ...
-def _necessary_one(
-    module_spec: ModuleSpec,
-    soft_check: bool = ...,
-    message: Optional[str] = ...,
-) -> bool: ...
 
-if TYPE_CHECKING:  # noqa: Y002
-    def necessary(
-        modules_spec: FullSpecType,
-        soft_check: bool = ...,
+class necessary:
+    def __init__(
+        self,
+        modules: FullSpecType,
+        soft: bool = ...,
         message: Optional[str] = ...,
-    ) -> Literal[True]: ...
-
-else:
-    def necessary(
-        modules_spec: FullSpecType,
+    ): ...
+    def parse_modules_spec_input(
+        self, modules_spec: FullSpecType
+    ) -> List[ModuleSpec]: ...
+    def check_module_is_available(
+        self,
+        module_spec: ModuleSpec,
         soft_check: bool = ...,
         message: Optional[str] = ...,
     ) -> bool: ...
+    def __enter__(self) -> "necessary": ...
+    def __exit__(self, exc_type, exc_value, traceback) -> None: ...
+
+    if TYPE_CHECKING:  # noqa: Y002
+        def __bool__(self) -> Literal[True]: ...
+    else:
+        def __bool__(self) -> Literal[True]: ...

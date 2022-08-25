@@ -24,9 +24,9 @@ class NecessaryTest(unittest.TestCase):
         with self.assertRaises(ImportError):
             necessary("2222")
 
-        self.assertFalse(necessary("2222", soft_check=True))
+        self.assertFalse(necessary("2222", soft=True))
 
         with self.assertRaises(ImportError):
             necessary(("black", "303030303303"))
 
-        self.assertFalse(necessary(("black", "303030303303"), soft_check=True))
+        self.assertFalse(necessary(("black", "303030303303"), soft=True))
