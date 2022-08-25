@@ -1,6 +1,6 @@
 [project]
 name = "necessary"
-version = "0.2.1"
+version = "0.2.2"
 description = "Python package to enforce optional dependencies"
 authors = [
     {name = "Luca Soldaini", email = "luca@soldaini.net" }
