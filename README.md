@@ -1,6 +1,6 @@
 # Necessary
 
-Python package to enforce optional dependencies.
+Python package that can be used to enforce optional dependencies are installed when a module is imported. Necessary stads for "Now Ensures Correct Existence of Select Software, or Add Resource Yourself!" 
 
 Install with:
 
