@@ -1,6 +1,6 @@
 [project]
 name = "necessary"
-version = "0.2.2"
+version = "0.2.3"
 description = "Python package to enforce optional dependencies"
 authors = [
     {name = "Luca Soldaini", email = "luca@soldaini.net" }
@@ -37,10 +37,16 @@ requires = [
     "wheel"
 ]
 
+# [tool.setuptools.packages.find]
+# where = ["."]
+# include = ["necessary*"]
+# namespaces = false
+
 [tool.setuptools.packages.find]
-where = ["."]
-include = ["necessary"]
-namespaces = false
+where = ["src"]
+
+[tool.setuptools.package-data]
+necessary = ["py.typed", "*.pyi"]
 
 [tool.black]
 line-length = 79
@@ -83,7 +89,3 @@ per-file-ignores = [
     '__init__.py:F401',
     '*.pyi:E301,E302,E305',
 ]
-
-# this works in setuptools >= 61.0.0
-[tool.setuptools.package-data]
-springs = ["py.typed"]
