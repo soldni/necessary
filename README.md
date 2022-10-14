@@ -1,8 +1,8 @@
 # Necessary
 
-Python package that can be used to enforce optional dependencies are installed when a module is imported. Necessary stads for "Now Ensures Correct Existence of Select Software, or Add Resource Yourself!" 
+Python package that can be used to enforce optional dependencies are installed when a module is imported. Necessary stads for "Now Ensures Correct Existence of Select Software, or Add Resource Yourself!"
 
-Install with:
+Necessary is available on [PyPI](https://pypi.org/project/necessary/), and can be installed with the following command:
 
 ```bash
 pip install necessary
