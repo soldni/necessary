@@ -14,7 +14,9 @@ dynamic = ["dependencies"]
 dependencies = {file = ["requirements.txt"]}
 
 [project.urls]
-homepage = "https://github.com/soldni/necessary"
+Homepage = "https://github.com/soldni/necessary"
+Source = "https://github.com/soldni/necessary"
+Tracker = "https://github.com/soldni/necessary/issues"
 
 [project.optional-dependencies]
 dev = [
