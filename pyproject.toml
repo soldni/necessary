@@ -1,6 +1,6 @@
 [project]
 name = "necessary"
-version = "0.2.4"
+version = "0.2.5"
 description = "Python package to enforce optional dependencies"
 authors = [
     {name = "Luca Soldaini", email = "luca@soldaini.net" }
@@ -8,10 +8,10 @@ authors = [
 license = {text = "Apache-2.0"}
 readme = "README.md"
 requires-python = ">=3.8"
-dynamic = ["dependencies"]
-
-[tool.setuptools.dynamic]
-dependencies = {file = ["requirements.txt"]}
+dependencies = [
+    "packaging>=21.0",
+    "typing_extensions>=4.3.0",
+]
 
 [project.urls]
 Homepage = "https://github.com/soldni/necessary"
