@@ -1,6 +1,6 @@
 [project]
 name = "necessary"
-version = "0.2.5"
+version = "0.3.0"
 description = "Python package to enforce optional dependencies"
 authors = [
     {name = "Luca Soldaini", email = "luca@soldaini.net" }
@@ -38,11 +38,6 @@ requires = [
     "setuptools >= 61.0.0",
     "wheel"
 ]
-
-# [tool.setuptools.packages.find]
-# where = ["."]
-# include = ["necessary*"]
-# namespaces = false
 
 [tool.setuptools.packages.find]
 where = ["src"]

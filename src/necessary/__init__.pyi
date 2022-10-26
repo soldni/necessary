@@ -1,5 +1,7 @@
-from .core import necessary
+from .core import NecessaryCls, necessary
 
-__all__ = ["necessary"]
+Necessary = NecessaryCls.decorate
+
+__all__ = ["necessary", "Necessary"]
 
 __version__: str

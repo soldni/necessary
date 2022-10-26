@@ -1,8 +1,10 @@
 import importlib.metadata
 
-from .core import necessary
+from .core import NecessaryCls, necessary
 
-__all__ = ["necessary"]
+Necessary = NecessaryCls.decorate
+
+__all__ = ["necessary", "Necessary"]
 
 try:
     # package has been installed, so it has a version number

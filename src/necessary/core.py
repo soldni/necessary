@@ -1,5 +1,6 @@
 import importlib.metadata
 import warnings
+from functools import partial
 from importlib import import_module
 from types import ModuleType
 from typing import List, NamedTuple, Optional, Tuple, Union
@@ -31,11 +32,8 @@ def get_module_version(
         return parse(raw_module_version)
     except Exception as e:
         warnings.warn(
-            (
-                f"Could not parse version of {module} "
-                f"as a valid version number. Error: {e}"
-            ),
-            UserWarning,
+            message=f"Could not parse version of {module}. Error: {e}",
+            category=UserWarning,
             stacklevel=2,
         )
         return None
@@ -153,3 +151,35 @@ class necessary:
 
     def __exit__(self, exc_type, exc_value, traceback) -> None:
         pass
+
+
+class NecessaryCls:
+    """A decorator that will raise an error when the decorated
+    function or class is called and the module is not available."""
+
+    def __init__(
+        self,
+        decorated,
+        modules: FullSpecType,
+        soft: bool = False,
+        message: Optional[str] = None,
+    ):
+        self.decorated = decorated
+        self.modules = modules
+        self.soft = soft
+        self.message = message
+
+    def __call__(self, *args, **kwargs):
+        with necessary(self.modules, soft=self.soft, message=self.message):
+            return self.decorated(*args, **kwargs)
+
+    @classmethod
+    def decorate(
+        cls,
+        modules: FullSpecType,
+        soft: bool = False,
+        message: Optional[str] = None,
+    ):
+        return partial(
+            cls, modules=modules, soft=soft, message=message  # pyright: ignore
+        )
