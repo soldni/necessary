@@ -1,6 +1,4 @@
-from .core import NecessaryCls, necessary
-
-Necessary = NecessaryCls.decorate
+from .core import Necessary, necessary
 
 __all__ = ["necessary", "Necessary"]
 

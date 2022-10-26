@@ -1,7 +1,8 @@
 import importlib.metadata
 import warnings
-from functools import partial
+from functools import wraps
 from importlib import import_module
+from inspect import isclass
 from types import ModuleType
 from typing import List, NamedTuple, Optional, Tuple, Union
 
@@ -153,33 +154,26 @@ class necessary:
         pass
 
 
-class NecessaryCls:
+def Necessary(
+    modules: FullSpecType,
+    soft: bool = False,
+    message: Optional[str] = None,
+):
     """A decorator that will raise an error when the decorated
     function or class is called and the module is not available."""
 
-    def __init__(
-        self,
-        decorated,
-        modules: FullSpecType,
-        soft: bool = False,
-        message: Optional[str] = None,
-    ):
-        self.decorated = decorated
-        self.modules = modules
-        self.soft = soft
-        self.message = message
+    def decorating_fn(decorated, modules=modules, soft=soft, message=message):
+        to_decorate = decorated.__init__ if isclass(decorated) else decorated
 
-    def __call__(self, *args, **kwargs):
-        with necessary(self.modules, soft=self.soft, message=self.message):
-            return self.decorated(*args, **kwargs)
+        @wraps(to_decorate)
+        def wrapper(*args, **kwargs):
+            with necessary(modules, soft=soft, message=message):
+                return to_decorate(*args, **kwargs)
 
-    @classmethod
-    def decorate(
-        cls,
-        modules: FullSpecType,
-        soft: bool = False,
-        message: Optional[str] = None,
-    ):
-        return partial(
-            cls, modules=modules, soft=soft, message=message  # pyright: ignore
-        )
+        if isclass(decorated):
+            decorated.__init__ = wrapper
+            return decorated
+        else:
+            return wrapper
+
+    return decorating_fn
