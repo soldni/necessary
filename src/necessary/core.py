@@ -6,10 +6,10 @@ from inspect import isclass
 from types import ModuleType
 from typing import List, NamedTuple, Optional, Tuple, Union
 
-from packaging.version import LegacyVersion, Version, parse
+from packaging.version import Version, parse
 
 PackageNameType = str
-PackageVersionType = Union[None, str, Version, LegacyVersion]
+PackageVersionType = Union[None, str, Version]
 PackageNameAndVersionType = Tuple[PackageNameType, PackageVersionType]
 FullSpecType = Union[
     PackageNameType,
@@ -20,7 +20,7 @@ FullSpecType = Union[
 
 def get_module_version(
     module: ModuleType,
-) -> Union[Version, LegacyVersion, None]:
+) -> Union[Version, None]:
     """Function to get the version of a package installed on the system."""
     try:
         # package has been installed, so it has a version number
@@ -130,9 +130,7 @@ class necessary:
             if module_version is None:
                 return True
 
-            if not isinstance(
-                module_spec.module_version, (Version, LegacyVersion)
-            ):
+            if not isinstance(module_spec.module_version, (Version)):
                 requested_version = parse(module_spec.module_version)
             else:
                 requested_version = module_spec.module_version
