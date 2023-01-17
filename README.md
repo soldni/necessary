@@ -10,6 +10,8 @@ pip install necessary
 
 ## How to Use
 
+### As Context Manager
+
 Simply use `necessary.necessary` to get a context manager import a module.
 
 ```python
@@ -57,3 +59,25 @@ Finally, we can customize the message that is raised if a necessary module is no
 with necessary('torch', message='I am missing {module_name}/{module_version}'):
     import torch
 ```
+
+### As Function or Class Decorator
+
+You can also use `necessary` as a function or class decorator:
+
+```python
+
+from necessary import Necessary
+
+# decorating a function
+@Necessary('torch')
+def my_function():
+    import torch
+
+# decorating a class
+@Necessary('torch')
+class MyClass:
+    def __init__(self):
+        import torch
+```
+
+All of the same functionality is available in the decorator form as in the context manager form.
