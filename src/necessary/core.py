@@ -1,12 +1,15 @@
 import importlib.metadata
+import operator
 import warnings
 from functools import wraps
 from importlib import import_module
 from inspect import isclass
 from types import ModuleType
-from typing import List, NamedTuple, Optional, Tuple, Union
+from typing import List, Optional, Tuple, Union
 
+import requirements
 from packaging.version import Version, parse
+from requirements.requirement import Requirement
 
 PackageNameType = str
 PackageVersionType = Union[None, str, Version]
@@ -16,6 +19,17 @@ FullSpecType = Union[
     PackageNameAndVersionType,
     List[Union[PackageNameType, PackageNameAndVersionType]],
 ]
+
+
+OP_TABLE = {
+    ">": operator.gt,
+    ">=": operator.ge,
+    "<": operator.lt,
+    "<=": operator.le,
+    "==": operator.eq,
+    "!=": operator.ne,
+    "~=": operator.ge,
+}
 
 
 def get_module_version(
@@ -40,9 +54,9 @@ def get_module_version(
         return None
 
 
-class ModuleSpec(NamedTuple):
-    module_name: PackageNameType
-    module_version: PackageVersionType
+# class ModuleSpec(NamedTuple):
+#     module_name: PackageNameType
+#     module_version: PackageVersionType
 
 
 class necessary:
@@ -73,35 +87,60 @@ class necessary:
         parsed_modules_spec = self.parse_modules_spec_input(modules)
         self._necessary = all(
             self.check_module_is_available(
-                module_spec=module_spec, soft_check=soft, message=message
+                req=module_spec, soft_check=soft, message=message
             )
             for module_spec in parsed_modules_spec
         )
 
     def parse_modules_spec_input(
         self, modules_spec: FullSpecType
-    ) -> List[ModuleSpec]:
+    ) -> List[Requirement]:
         if not isinstance(modules_spec, list):
             modules_spec = [modules_spec]
 
-        parsed_modules_spec: List[ModuleSpec] = []
+        parsed_requirements: List[Requirement] = []
+
         for module_spec in modules_spec:
-            if isinstance(module_spec, str):
-                parsed_modules_spec.append(ModuleSpec(module_spec, None))
-            elif isinstance(module_spec, tuple) and len(module_spec) == 2:
-                parsed_modules_spec.append(ModuleSpec(*module_spec))
-            else:
+            if isinstance(module_spec, tuple):
+                if not len(module_spec) == 2:
+                    raise ValueError(
+                        "When providing a tuple for `modules_spec`, it must "
+                        "contain exactly two elements: (module name, version)."
+                    )
+                module_spec = ">=".join(map(str, module_spec))
+
+            spec = next(requirements.parse(module_spec))
+            if spec.name is None:
                 raise ValueError(
-                    "`modules_spec` must be either a module name, a tuple "
-                    "consisting of (module name, version), or a list "
-                    f"containing a mix of the two; I could not recognize "
-                    f"{repr(modules_spec)} as a valid input."
+                    f"Could not parse module name from {module_spec}."
                 )
-        return parsed_modules_spec
+            parsed_requirements.append(spec)
+
+        return parsed_requirements
+
+    def get_error(
+        self, req: Requirement, message: Optional[str] = None
+    ) -> ImportError:
+
+        spec_message = (
+            " with version requirements {module_version}" if req.specs else ""
+        )
+        message = message or (
+            "Please install module {module_name}" + spec_message + "."
+        )
+
+        module_version = ",".join("".join(s) for s in req.specs)
+        module_name = req.name
+
+        return ImportError(
+            message.format(
+                module_name=module_name, module_version=module_version
+            )
+        )
 
     def check_module_is_available(
         self,
-        module_spec: ModuleSpec,
+        req: Requirement,
         soft_check: bool = False,
         message: Optional[str] = None,
     ) -> bool:
@@ -110,36 +149,35 @@ class necessary:
         # message is provided by the user.
         if message is None:
             message = "'{module_name}' is required, please install it."
-            if module_spec.module_version is not None:
+            if req.specs:
                 message = "version '{module_version}' of " + message
 
         # fist check is to see if we can import the module.
         try:
-            module = import_module(module_spec.module_name)
+            module = import_module(str(req.name))
         except ModuleNotFoundError:
             if soft_check:
                 return False
-            else:
-                raise ImportError(message.format(**module_spec._asdict()))
+            raise self.get_error(req=req, message=message)
 
         # then let's check if a minimum version is specified and if so,
         # check it.
-        if module_spec.module_version is not None:
-            module_version = get_module_version(module)
+        module_version = get_module_version(module)
+        if module_version is None:
+            return True
 
-            if module_version is None:
-                return True
+        for op_sym, ver_str in req.specs:
+            op = OP_TABLE.get(op_sym, None)
+            if op is None:
+                raise ValueError(f"Unknown operator {op_sym} in {req}.")
+            ver = parse(ver_str)
 
-            if not isinstance(module_spec.module_version, (Version)):
-                requested_version = parse(module_spec.module_version)
-            else:
-                requested_version = module_spec.module_version
-
-            if requested_version > module_version:
+            if not op(module_version, ver):
                 if soft_check:
                     return False
                 else:
-                    raise ImportError(message.format(**module_spec._asdict()))
+                    raise self.get_error(req=req, message=message)
+
         return True
 
     def __bool__(self) -> bool:
