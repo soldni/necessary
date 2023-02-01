@@ -1,5 +1,5 @@
 [flake8]
-max-line-length = 79
+max-line-length = 115
 
 ignore =
     # these rules don't play well with black
@@ -10,6 +10,7 @@ ignore =
 
 exclude =
     .venv
+    ./.venv
     .git
     __pycache__
     .mypy_cache
@@ -18,3 +19,4 @@ per-file-ignores =
     # __init__.py files are allowed to have unused imports and lines-too-long
     */__init__.py:F401
     */**/**/__init__.py:F401,E501
+    */**/*.pyi:Y027,Y022,Y037,Y020
