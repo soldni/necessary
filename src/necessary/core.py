@@ -5,7 +5,7 @@ from functools import wraps
 from importlib import import_module
 from inspect import isclass
 from types import ModuleType
-from typing import List, NamedTuple, Optional, Tuple, Union
+from typing import List, Optional, Tuple, Union
 
 import requirements
 from packaging.version import Version, parse
