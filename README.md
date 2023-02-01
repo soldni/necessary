@@ -34,20 +34,20 @@ except ImportError:
     assert out is False
 ```
 
-If you want to request a minimum version, use `min_version`:
+If you want to request a minimum version, use Python's requirements syntax:
 
 ```python
-with necessary(('torch', '1.12.0')):
+with necessary('torch>=1.12.0'):
     # this will raise an error if
     # torch is not installed or if
     # the installed version is less than 0.12.0
     import torch
 ```
 
-You can also check multiple packages in the same `necessary` call:
+You can also check multiple packages in the same `necessary` call, or combine multiple requirements:
 
 ```python
-with necessary([('torch', '1.12.0'), 'numpy']):
+with necessary(['torch>=1.12.0', 'numpy>=1.20,<1.25']):
     # this will raise an error if torch >= 1.12.0 or numpy are not installed
     import torch
     import numpy
