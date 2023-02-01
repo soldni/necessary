@@ -1,6 +1,5 @@
 import unittest
 
-
 from necessary.core import necessary
 
 
