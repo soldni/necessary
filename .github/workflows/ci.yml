@@ -34,7 +34,7 @@ jobs:
 
           - name: Lint
             run: |
-              flake8 .
+              flake8 . --exclude .venv
 
           - name: Type check
             run: |
