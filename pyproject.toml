@@ -1,6 +1,6 @@
 [project]
 name = "necessary"
-version = "0.4.0"
+version = "0.4.1"
 description = "Python package to enforce optional dependencies"
 authors = [
     {name = "Luca Soldaini", email = "luca@soldaini.net" }
@@ -9,7 +9,7 @@ license = {text = "Apache-2.0"}
 readme = "README.md"
 requires-python = ">=3.8"
 dependencies = [
-    "packaging>=22.0",
+    "packaging>=21.0",
     "typing_extensions>=4.3.0",
     "requirements-parser>=0.5.0"
 ]
