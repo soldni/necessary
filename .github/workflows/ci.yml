@@ -29,20 +29,20 @@ jobs:
         task:
           - name: Style
             run: |
-              isort --check .
-              black -l 79 --check .
+              echo "=====isort=====" && isort -v --check .
+              echo "=====black=====" && black -v --check .
 
           - name: Lint
             run: |
-              flake8 . --exclude .venv
+              echo "=====flake8=====" && flake8 . --exclude .venv -v
 
           - name: Type check
             run: |
-              mypy .
+              echo "=====mypy=====" && mypy -v .
 
           - name: Test
             run: |
-              pytest -v --color=yes tests/
+              echo "=====pytest=====" && pytest -v --color=yes tests/
 
     steps:
       - uses: actions/checkout@v3
