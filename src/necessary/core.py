@@ -39,12 +39,11 @@ def get_module_version(
     try:
         # package has been installed, so it has a version number
         # from pyproject.toml
-        raw_module_version = getattr(
-            module,
-            "__version__",
-            importlib.metadata.version(module.__package__ or module.__name__),
-        )
-        return parse(raw_module_version)
+        if (raw_version := getattr(module, "__version__", None)) is None:
+            raw_version = importlib.metadata.version(
+                module.__package__ or module.__name__
+            )
+        return parse(raw_version)
     except Exception as e:
         warnings.warn(
             message=f"Could not parse version of {module}. Error: {e}",
