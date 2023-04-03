@@ -120,7 +120,6 @@ class necessary:
     def get_error(
         self, req: Requirement, message: Optional[str] = None
     ) -> ImportError:
-
         spec_message = (
             " with version requirements {module_version}" if req.specs else ""
         )
@@ -143,7 +142,6 @@ class necessary:
         soft_check: bool = False,
         message: Optional[str] = None,
     ) -> bool:
-
         # this is the message to raise in case of failure and if no custom
         # message is provided by the user.
         if message is None:
