@@ -5,7 +5,7 @@ from functools import wraps
 from importlib import import_module
 from inspect import isclass
 from types import ModuleType
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple, Type, Union
 
 import requirements
 from packaging.version import Version, parse
@@ -53,9 +53,8 @@ def get_module_version(
         return None
 
 
-# class ModuleSpec(NamedTuple):
-#     module_name: PackageNameType
-#     module_version: PackageVersionType
+class NecessaryImportError(ImportError):
+    ...
 
 
 class necessary:
@@ -66,6 +65,7 @@ class necessary:
         modules: FullSpecType,
         soft: bool = False,
         message: Optional[str] = None,
+        errors: Optional[Tuple[Type[Exception], ...]] = None,
     ):
         """
         Args:
@@ -79,11 +79,15 @@ class necessary:
                 given message. If your message contains "{module_name}" and
                 "{module_version}", the function will replace them with the
                 their respective values.
+            errors (Optional[List[Type[Exception]]]): If provided, the tuple
+                of errors to be caught to determine if a module is not
+                installed. If not provided, default is [ModuleNotFoundError].
 
         Raises:
             ImportError: If the module is not installed and `soft` is False.
         """
         parsed_modules_spec = self.parse_modules_spec_input(modules)
+        self._errors = errors or (ModuleNotFoundError,)
         self._necessary = all(
             self.check_module_is_available(
                 req=module_spec, soft_check=soft, message=message
@@ -152,7 +156,7 @@ class necessary:
         # fist check is to see if we can import the module.
         try:
             module = import_module(str(req.name))
-        except ModuleNotFoundError:
+        except self._errors:
             if soft_check:
                 return False
             raise self.get_error(req=req, message=message)
@@ -191,6 +195,7 @@ def Necessary(
     modules: FullSpecType,
     soft: bool = False,
     message: Optional[str] = None,
+    errors: Optional[Tuple[Type[Exception], ...]] = None,
 ):
     """A decorator that will raise an error when the decorated
     function or class is called and the module is not available."""
@@ -200,7 +205,12 @@ def Necessary(
 
         @wraps(to_decorate)
         def wrapper(*args, **kwargs):
-            with necessary(modules, soft=soft, message=message):
+            with necessary(
+                modules,
+                soft=soft,
+                message=message,
+                errors=errors,
+            ):
                 return to_decorate(*args, **kwargs)
 
         if isclass(decorated):

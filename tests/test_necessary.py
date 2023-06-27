@@ -30,3 +30,7 @@ class NecessaryTest(unittest.TestCase):
             necessary(("black", "303030303303"))
 
         self.assertFalse(necessary(("black", "303030303303"), soft=True))
+
+    def test_custom_error(self) -> None:
+        with self.assertRaises(ModuleNotFoundError):
+            necessary("foo", errors=(ValueError,))

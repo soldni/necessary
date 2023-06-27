@@ -4,18 +4,19 @@ from typing import (
     Callable,
     List,
     Literal,
-    NamedTuple,
     Optional,
     Tuple,
+    Type,
     TypeVar,
     Union,
 )
 
-from packaging.version import LegacyVersion, Version
+from packaging.version import Version
+from requirements.requirement import Requirement
 from typing_extensions import TypeAlias
 
-PackageNameType: TypeAlias = str
-PackageVersionType: TypeAlias = Union[str, Version, LegacyVersion]
+PackageNameType = str
+PackageVersionType: TypeAlias = Union[None, str, Version]
 PackageNameAndVersionType: TypeAlias = Tuple[
     PackageNameType, PackageVersionType
 ]
@@ -25,13 +26,11 @@ FullSpecType: TypeAlias = Union[
     List[Union[PackageNameType, PackageNameAndVersionType]],
 ]
 
-class ModuleSpec(NamedTuple):
-    module_name: PackageNameType
-    module_version: PackageVersionType
+class NecessaryImportError(ImportError): ...
 
 def get_module_version(
     module: ModuleType,
-) -> Union[Version, LegacyVersion, None]: ...
+) -> Union[Version, None]: ...
 
 class necessary:
     def __init__(
@@ -39,13 +38,14 @@ class necessary:
         modules: FullSpecType,
         soft: bool = ...,
         message: Optional[str] = ...,
+        errors: Optional[Tuple[Type[Exception], ...]] = ...,
     ): ...
     def parse_modules_spec_input(
         self, modules_spec: FullSpecType
-    ) -> List[ModuleSpec]: ...
+    ) -> List[Requirement]: ...
     def check_module_is_available(
         self,
-        module_spec: ModuleSpec,
+        req: Requirement,
         soft_check: bool = ...,
         message: Optional[str] = ...,
     ) -> bool: ...
@@ -63,4 +63,5 @@ def Necessary(
     modules: FullSpecType,
     soft: bool = ...,
     message: Optional[str] = ...,
+    errors: Optional[Tuple[Type[Exception], ...]] = ...,
 ) -> Callable[[_T], _T]: ...
